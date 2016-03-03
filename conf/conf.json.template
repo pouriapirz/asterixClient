@@ -5,5 +5,5 @@
 "iterations" : 2,
 "stats.file" : "/tmp/stats.txt",
 "dump.results" : true,
-"results.file" : "/tmp/bigFUN/files/res_dump.txt"
+"results.file" : "/tmp/res_dump.txt"
 }
