@@ -1,4 +1,4 @@
-package structures;
+package structure;
 
 public class Query{
 	private String name;

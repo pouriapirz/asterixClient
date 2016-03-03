@@ -1,0 +1,9 @@
+{
+"cc" : "127.0.0.1",
+"port" : 19002,
+"query.language" : "aql",
+"iterations" : 2,
+"stats.file" : "/tmp/stats.txt",
+"dump.results" : true,
+"results.file" : "/tmp/bigFUN/files/res_dump.txt"
+}

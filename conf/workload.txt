@@ -1,0 +1,3 @@
+#This file should contain the workload to be run by the client and it *has to* be named as 'workload.txt'.
+#Each line has to be the absolute full path to a query file which contains a *complete* AsterixDB query (in 'aql' or 'sqlpp').
+#The queries will be run, in order, by the client per iteration.  
