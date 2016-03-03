@@ -27,11 +27,6 @@ import structure.Query;
 public class AsterixDBClient {
 
     private final ClientConfig config;
-    /*
-    private final String cc;
-    private final int port;
-    private final String queryLang; //AQL or SQLPP
-    */
     private int iterations;
     private URIBuilder roBuilder;
     private DefaultHttpClient httpclient;
