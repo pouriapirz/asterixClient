@@ -21,8 +21,7 @@
 Upon a successful build, a new directory named 'target' will be created under CLIENT_HOME that contains the jar file for the client with its dependencies.
 4. The AsterixDB client needs two configuration files under the 'conf' directory to run:
 
-* _conf.json_: This is a json file that contains the settings for various parameters that client uses to run. A template for this file should already be available under '$CLIENT_HOME/conf' directory. Here is the list of parameters and their description:
-
+ * _conf.json_: This is a json file that contains the settings for various parameters that client uses to run. A template for this file should already be available under '$CLIENT_HOME/conf' directory. Here is the list of parameters and their description:
   Parameter |Type |Description |
     --- | --- | --- |
     cc |string |URL of the machine running the AsterixDB instance's cluster controller  |
@@ -32,8 +31,7 @@ Upon a successful build, a new directory named 'target' will be created under CL
     stats.file |string |Full path to the file that will contain the test's statistics by the end of the test |
     dump.results |boolean |Whether to dump the returned results per query after its execution: 'true' or 'false' |
     results.file |string |Full path to the file that will contains the dump of the queries' results  |
-  
-* _workload.txt_: This file defines a specific read-only workload which is a sequence of queries that will be run, in order, by the client in each iteration of a test. Each line of the file should be a full, absolute path to a readable file that contains a complete query in 'aql' or 'sqlpp' (By a complete query, we basically mean it should be exactly the same as the statements that you would type inside the query-box when using the Web-API of AsterixDB).
+ * _workload.txt_: This file defines a specific read-only workload which is a sequence of queries that will be run, in order, by the client in each iteration of a test. Each line of the file should be a full, absolute path to a readable file that contains a complete query in 'aql' or 'sqlpp' (By a complete query, we basically mean it should be exactly the same as the statements that you would type inside the query-box when using the Web-API of AsterixDB).
 
 5. Once you modified and saved the configuration and workload files (with 'conf.json' and 'workload.txt' under the '$CLIENT_HOME/conf' directory respectively) you can run the AsterixDB client by invoking the 'run.sh' script under the '$CLIENT_HOME/scripts' directory:
 
