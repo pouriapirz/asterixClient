@@ -21,6 +21,8 @@ public class Constants {
     public static final String SQLPP_URL_SUFFIX = "/query/sqlpp";
     public static final String CC_URL = "cc";
     public static final String PORT = "port";
+    public static final String PATH = "path";
+    public static final String PARAMETER = "parameter";
     public static final String ITERATIONS = "iterations";
     public static final String QUERY_LANG = "query.language";
     public static final String STATS_FILE = "stats.file";
@@ -31,6 +33,7 @@ public class Constants {
     public static final String CONFIG_FILE = "conf/conf.json";
     public static final String WORKLOAD_FILE = "conf/workload.txt";
     public static final int DEFAULT_PORT = 19002;
+    public static final String DEFAULT_PARAMETER = "query";
     public static final String DEFAULT_STATS_FILE = "output/stats.txt";
 
 }

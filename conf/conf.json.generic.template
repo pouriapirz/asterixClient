@@ -1,0 +1,10 @@
+{
+"cc" : "127.0.0.1",
+"port" : 19002,
+"path" : "/query/service",
+"parameter" : "statement",
+"iterations" : 2,
+"stats.file" : "/tmp/stats.txt",
+"dump.results" : true,
+"results.file" : "/tmp/res_dump.txt"
+}
