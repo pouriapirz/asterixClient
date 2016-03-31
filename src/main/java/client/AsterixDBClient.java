@@ -136,8 +136,11 @@ public class AsterixDBClient {
             pw.println("\nIteration\tQName\tTime"); //TSV header
 
             rw = null;
-            if (config.isParamSet(Constants.RESULTS_FILE)) {
-                String resultsFile = (String) config.getParamValue(Constants.RESULTS_FILE);
+            if (config.isParamSet(Constants.DUMP_RESULTS) && (boolean) config.getParamValue(Constants.DUMP_RESULTS)) {
+                String resultsFile = config.getHomePath() + "/" + Constants.DEFAULT_RESULTS_FILE;
+                if (config.isParamSet(Constants.RESULTS_FILE)) {
+                    resultsFile = (String) config.getParamValue(Constants.RESULTS_FILE);
+                }
                 rw = new PrintWriter(resultsFile);
             }
         } catch (URISyntaxException e) {

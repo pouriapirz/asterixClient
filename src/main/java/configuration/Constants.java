@@ -32,5 +32,5 @@ public class Constants {
     public static final String WORKLOAD_FILE = "conf/workload.txt";
     public static final int DEFAULT_PORT = 19002;
     public static final String DEFAULT_STATS_FILE = "output/stats.txt";
-
+    public static final String DEFAULT_RESULTS_FILE = "output/results.txt";
 }
