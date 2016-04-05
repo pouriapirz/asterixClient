@@ -64,6 +64,7 @@ public class AsterixDBClient {
                 pw.println(i + "\t" + q.getName() + "\t" + rspt);
                 System.out.println("Query " + q.getName() + "\t" + rspt + " ms"); //progress trace message
             }
+            pw.flush();
         }
         terminate();
     }
@@ -86,6 +87,7 @@ public class AsterixDBClient {
 
             if (rw != null) { //Dump returned results (if requested)
                 rw.println("\n" + q.getName() + "\n" + content);
+                rw.flush();
             }
         } catch (Exception ex) {
             System.err.println("Problem in read-only query execution against Asterix\n" + content);
