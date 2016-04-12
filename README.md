@@ -42,7 +42,7 @@ Upon a successful build, a new directory named 'target' will be created under CL
       parameter |string |The name of the HTTP parameter for the query |
 
      So when setting `cc` to "127.0.0.1", `port` to "19002", `path` to "query", and `parameter` to "statement", the URI
-    for a query "QUERY" will be `http://127.0.0.1:19002/query/parameter=QUERY`.
+    for a query "QUERY" will be `http://127.0.0.1:19002/query?parameter=QUERY`.
 
  * _workload.txt_: This file defines a specific read-only workload which is a sequence of queries that will be run, in
    order, by the client in each iteration of a test. Each line of the file should be a full, absolute path to either a
