@@ -20,7 +20,6 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.PrintWriter;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -30,14 +29,15 @@ import java.util.List;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 
+import structure.Query;
 import configuration.ClientConfig;
 import configuration.Constants;
-import structure.Query;
 
 public class AsterixDBClient {
 
@@ -80,6 +80,9 @@ public class AsterixDBClient {
 
             long s = System.currentTimeMillis(); //Start the timer
             HttpResponse response = httpclient.execute(httpGet); //Actual execution against the server
+            if (response.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
+                System.err.println("error on " + q.getName() + ": " + response.getStatusLine());
+            }
             HttpEntity entity = response.getEntity();
             content = EntityUtils.toString(entity);
             EntityUtils.consume(entity); //Make sure to consume the results
