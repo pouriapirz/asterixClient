@@ -20,29 +20,31 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.PrintWriter;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 
+import structure.Query;
 import configuration.ClientConfig;
 import configuration.Constants;
-import structure.Query;
 
 public class AsterixDBClient {
 
     private final ClientConfig config;
     private int iterations;
     private URIBuilder roBuilder;
+    private String parameter;
     private DefaultHttpClient httpclient;
     private HttpGet httpGet;
     private PrintWriter pw; //stats writer
@@ -72,12 +74,15 @@ public class AsterixDBClient {
         String content = null;
         long rspTime = Constants.INVALID_TIME; //initial value
         try {
-            roBuilder.setParameter("query", q.getBody());
+            roBuilder.setParameter(parameter, q.getBody());
             URI uri = roBuilder.build();
             httpGet.setURI(uri);
 
             long s = System.currentTimeMillis(); //Start the timer
             HttpResponse response = httpclient.execute(httpGet); //Actual execution against the server
+            if (response.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
+                System.err.println("error on " + q.getName() + ": " + response.getStatusLine());
+            }
             HttpEntity entity = response.getEntity();
             content = EntityUtils.toString(entity);
             EntityUtils.consume(entity); //Make sure to consume the results
@@ -86,6 +91,7 @@ public class AsterixDBClient {
 
             if (rw != null) { //Dump returned results (if requested)
                 rw.println("\n" + q.getName() + "\n" + content);
+                rw.flush();
             }
         } catch (Exception ex) {
             System.err.println("Problem in read-only query execution against Asterix\n" + content);
@@ -102,18 +108,29 @@ public class AsterixDBClient {
             if (config.isParamSet(Constants.PORT)) {
                 port = (int) config.getParamValue(Constants.PORT);
             }
-            String qLang = (String) config.getParamValue(Constants.QUERY_LANG);
-            switch (qLang) {
-                case Constants.AQL:
-                    roBuilder = new URIBuilder("http://" + cc + ":" + port + Constants.AQL_URL_SUFFIX);
-                    break;
-                case Constants.SQLPP:
-                    roBuilder = new URIBuilder("http://" + cc + ":" + port + Constants.SQLPP_URL_SUFFIX);
-                    break;
-                default:
-                    System.err.println("Invalid Query Language: " + qLang + " (Valid values are " + Constants.AQL
-                            + " and " + Constants.SQLPP + " ).");
-                    return;
+            roBuilder = new URIBuilder().setScheme("http").setHost(cc).setPort(port);
+            if (config.isParamSet(Constants.PATH)) {
+                String path = (String) config.getParamValue(Constants.PATH);
+                roBuilder.setPath(path);
+            } else {
+                String qLang = (String) config.getParamValue(Constants.QUERY_LANG);
+                switch (qLang) {
+                    case Constants.AQL:
+                        roBuilder.setPath(Constants.AQL_URL_SUFFIX);
+                        break;
+                    case Constants.SQLPP:
+                        roBuilder.setPath(Constants.SQLPP_URL_SUFFIX);
+                        break;
+                    default:
+                        System.err.println("Invalid Query Language: " + qLang + " (Valid values are " + Constants.AQL
+                                + " and " + Constants.SQLPP + " ).");
+                        return;
+                }
+            }
+            if (config.isParamSet(Constants.PARAMETER)) {
+                parameter = (String) config.getParamValue(Constants.PARAMETER);
+            } else {
+                parameter = Constants.DEFAULT_PARAMETER;
             }
 
             httpclient = new DefaultHttpClient();
@@ -140,9 +157,6 @@ public class AsterixDBClient {
                 String resultsFile = (String) config.getParamValue(Constants.RESULTS_FILE);
                 rw = new PrintWriter(resultsFile);
             }
-        } catch (URISyntaxException e) {
-            System.err.println("Issue(s) in initializing the HTTP client");
-            e.printStackTrace();
         } catch (FileNotFoundException e) {
             System.err.println("Issue in initializing printWriter(s)");
             e.printStackTrace();
@@ -185,14 +199,23 @@ public class AsterixDBClient {
                 if (line.trim().startsWith(Constants.COMMENT_TAG)) {
                     continue;
                 }
-                File f = new File(line.trim());
-                loadQuery(f);
-                qSeq.add(new String(f.getName()));
+                addFileOrDir(new File(line.trim()), qSeq);
             }
             br.close();
         } catch (Exception e) {
             System.err.println("Error in loading workload from " + workloadFile);
             e.printStackTrace();
+        }
+    }
+
+    private void addFileOrDir(File file, List<String> qSeq) {
+        if (file.isDirectory()) {
+            for (File f : file.listFiles()) {
+                addFileOrDir(f, qSeq);
+            }
+        } else if (file.isFile()) {
+            loadQuery(file);
+            qSeq.add(file.getName());
         }
     }
 
@@ -204,18 +227,16 @@ public class AsterixDBClient {
                 return;
             }
             BufferedReader in = new BufferedReader(new FileReader(qPath));
-            StringBuffer sb = new StringBuffer();
+            StringBuilder sb = new StringBuilder();
             String str;
             while ((str = in.readLine()) != null) {
                 sb.append(str).append("\n");
             }
             idToQuery.put(qName, new Query(f.getName(), sb.toString()));
             in.close();
-
         } catch (Exception e) {
             System.err.println("Error in reading query from file " + f.getAbsolutePath());
             e.printStackTrace();
         }
     }
-
 }
