@@ -30,4 +30,9 @@ public class Query {
     public String getBody() {
         return body;
     }
+
+    public String toString() {
+        return name + "\n\n" + body;
+    }
+
 }
