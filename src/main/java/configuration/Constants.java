@@ -35,5 +35,5 @@ public class Constants {
     public static final int DEFAULT_PORT = 19002;
     public static final String DEFAULT_PARAMETER = "query";
     public static final String DEFAULT_STATS_FILE = "output/stats.txt";
-
+    public static final String DEFAULT_RESULTS_FILE = "output/results.txt";
 }
