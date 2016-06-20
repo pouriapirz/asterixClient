@@ -17,8 +17,9 @@ package configuration;
 public class Constants {
     public static final String COMMENT_TAG = "#";
     public static final long INVALID_TIME = 1L;
-    public static final String AQL_URL_SUFFIX = "/query";
+    public static final String AQL_URL_SUFFIX = "/aql";
     public static final String SQLPP_URL_SUFFIX = "/query/sqlpp";
+    public static final String QUERY_PARAMETER = "aql";
     public static final String CC_URL = "cc";
     public static final String PORT = "port";
     public static final String ITERATIONS = "iterations";

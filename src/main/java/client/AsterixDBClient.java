@@ -73,14 +73,15 @@ public class AsterixDBClient {
         String content = null;
         long rspTime = Constants.INVALID_TIME; //initial value
         try {
-            roBuilder.setParameter("query", q.getBody());
+            roBuilder.setParameter(Constants.QUERY_PARAMETER, q.getBody());
             URI uri = roBuilder.build();
             httpGet.setURI(uri);
 
             long s = System.currentTimeMillis(); //Start the timer
             HttpResponse response = httpclient.execute(httpGet); //Actual execution against the server
             HttpEntity entity = response.getEntity();
-            content = EntityUtils.toString(entity);
+            // TODO find a way to process large results.
+            // content = EntityUtils.toString(entity);
             EntityUtils.consume(entity); //Make sure to consume the results
             long e = System.currentTimeMillis(); //Stop the timer
             rspTime = (e - s); //Total duration
@@ -183,7 +184,7 @@ public class AsterixDBClient {
             }
             qSeq.clear();
             if (idToQuery == null) {
-                idToQuery = new HashMap<String, Query>();
+                idToQuery = new HashMap<>();
             }
             idToQuery.clear();
             while ((line = br.readLine()) != null) {
@@ -209,7 +210,7 @@ public class AsterixDBClient {
                 return;
             }
             BufferedReader in = new BufferedReader(new FileReader(qPath));
-            StringBuffer sb = new StringBuffer();
+            StringBuilder sb = new StringBuilder();
             String str;
             while ((str = in.readLine()) != null) {
                 sb.append(str).append("\n");
