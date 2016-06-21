@@ -43,6 +43,7 @@ public class AsterixDBClient {
     private final ClientConfig config;
     private int iterations;
     private URIBuilder roBuilder;
+    private URIBuilder resultBuilder;
     private DefaultHttpClient httpclient;
     private HttpGet httpGet;
     private PrintWriter pw; //stats writer
@@ -70,28 +71,42 @@ public class AsterixDBClient {
     }
 
     private long executeQuery(Query q) {
-        String content = null;
+        String handle = null;
         long rspTime = Constants.INVALID_TIME; //initial value
         try {
             roBuilder.setParameter(Constants.QUERY_PARAMETER, q.getBody());
+            roBuilder.setParameter("mode", "asynchronous-deferred");
+
             URI uri = roBuilder.build();
             httpGet.setURI(uri);
 
             long s = System.currentTimeMillis(); //Start the timer
             HttpResponse response = httpclient.execute(httpGet); //Actual execution against the server
             HttpEntity entity = response.getEntity();
-            // TODO find a way to process large results.
-            // content = EntityUtils.toString(entity);
-            EntityUtils.consume(entity); //Make sure to consume the results
+            handle = EntityUtils.toString(entity); // Get handle
+            EntityUtils.consume(entity);
             long e = System.currentTimeMillis(); //Stop the timer
             rspTime = (e - s); //Total duration
 
-            if (rw != null) { //Dump returned results (if requested)
-                rw.println("\n" + q.getName() + "\n" + content);
-                rw.flush();
+            // TODO Handle errors in handle.
+            // Get result.
+            if (handle != null) {
+                resultBuilder.setParameter("handle", handle);
+                uri = resultBuilder.build();
+                System.err.println(uri);
+                httpGet.setURI(uri);
+                response = httpclient.execute(httpGet);
+                entity = response.getEntity();
+                if (rw != null) {
+                    // Dump returned results (if requested)
+                    String content = EntityUtils.toString(entity);
+                    rw.println("\n" + q.getName() + "\n" + content);
+                    rw.flush();
+                }
+                EntityUtils.consume(entity); //Make sure to consume the results
             }
         } catch (Exception ex) {
-            System.err.println("Problem in read-only query execution against Asterix\n" + content);
+            System.err.println("Problem in read-only query execution against Asterix");
             ex.printStackTrace();
             return Constants.INVALID_TIME; //invalid time (query was not successful)
         }
@@ -139,6 +154,7 @@ public class AsterixDBClient {
             pw.println("\nIteration\tQName\tTime"); //TSV header
 
             rw = null;
+            resultBuilder = new URIBuilder("http://" + cc + ":" + port + Constants.RESULT_URL_SUFFIX);
             if (config.isParamSet(Constants.DUMP_RESULTS) && (boolean) config.getParamValue(Constants.DUMP_RESULTS)) {
                 String resultsFile = config.getHomePath() + "/" + Constants.DEFAULT_RESULTS_FILE;
                 if (config.isParamSet(Constants.RESULTS_FILE)) {
