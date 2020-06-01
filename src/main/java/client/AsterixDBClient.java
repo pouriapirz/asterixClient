@@ -50,6 +50,10 @@ public class AsterixDBClient {
     private PrintWriter rw; //results writer (if requested)
     private HashMap<String, Query> idToQuery;
     private ArrayList<String> qSeq;
+    private String currentDate;
+    private String partitions = Constants.DEFAULT_PARTITIONS;
+    private String label = Constants.DEFAULT_LABEL;
+    private String test = Constants.DEFAULT_TEST;
 
     public AsterixDBClient(ClientConfig config) {
         this.config = config;
@@ -62,6 +66,7 @@ public class AsterixDBClient {
             for (String nextQ : qSeq) {
                 Query q = idToQuery.get(nextQ);
                 long rspt = executeQuery(q);
+                pw.print(test + "\t" + currentDate + "\t" + label + "\t" + partitions + "\t" );
                 pw.println(i + "\t" + q.getName() + "\t" + rspt);
                 System.out.println("Query " + q.getName() + "\t" + rspt + " ms"); //progress trace message
             }
@@ -121,6 +126,15 @@ public class AsterixDBClient {
                 port = (int) config.getParamValue(Constants.PORT);
             }
             String qLang = (String) config.getParamValue(Constants.QUERY_LANG);
+            if (config.isParamSet(Constants.PARTITIONS)) {
+                partitions = (String) config.getParamValue(Constants.PARTITIONS);
+            }
+            if (config.isParamSet(Constants.LABEL)) {
+                label = (String) config.getParamValue(Constants.LABEL);
+            }
+            if (config.isParamSet(Constants.TEST)) {
+                test = (String) config.getParamValue(Constants.TEST);
+            }
             switch (qLang) {
                 case Constants.AQL:
                     roBuilder = new URIBuilder("http://" + cc + ":" + port + Constants.AQL_URL_SUFFIX);
@@ -146,12 +160,18 @@ public class AsterixDBClient {
             if (config.isParamSet(Constants.STATS_FILE)) {
                 statsFile = (String) config.getParamValue(Constants.STATS_FILE);
             }
+
             pw = new PrintWriter(statsFile);
+            
             DateFormat df = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss");
             Date dateobj = new Date();
             String currentTime = df.format(dateobj);
+            
+            DateFormat df_date = new SimpleDateFormat("yyyy-MM-dd");
+            currentDate = df_date.format(dateobj);
+            
             pw.println(currentTime); //Add the test time as the header
-            pw.println("\nIteration\tQName\tTime"); //TSV header
+            pw.println("\nTest\tDate\tLabel\tPartitions\tIteration\tQName\tTime"); //TSV header
 
             rw = null;
             resultBuilder = new URIBuilder("http://" + cc + ":" + port + Constants.RESULT_URL_SUFFIX);

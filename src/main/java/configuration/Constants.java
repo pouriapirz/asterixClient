@@ -23,7 +23,10 @@ public class Constants {
     public static final String QUERY_PARAMETER = "aql";
     public static final String CC_URL = "cc";
     public static final String PORT = "port";
+    public static final String PARTITIONS = "partitions";
     public static final String ITERATIONS = "iterations";
+    public static final String LABEL = "label";
+    public static final String TEST = "test";
     public static final String QUERY_LANG = "query.language";
     public static final String STATS_FILE = "stats.file";
     public static final String DUMP_RESULTS = "dump.results";
@@ -35,4 +38,7 @@ public class Constants {
     public static final int DEFAULT_PORT = 19002;
     public static final String DEFAULT_STATS_FILE = "output/stats.txt";
     public static final String DEFAULT_RESULTS_FILE = "output/results.txt";
+    public static final String DEFAULT_PARTITIONS = "-2";
+    public static final String DEFAULT_LABEL = "none";
+    public static final String DEFAULT_TEST = "none";
 }
