@@ -66,7 +66,7 @@ public class AsterixDBClient {
             for (String nextQ : qSeq) {
                 Query q = idToQuery.get(nextQ);
                 long rspt = executeQuery(q);
-                pw.println(test + "\t" + currentDate + "\t" + label + "\t" + String.valueOf(partitions)
+                pw.println(test + "\t" + currentDate + "\t" + label + "\t" + partitions
                     + "\t" + i + "\t" + q.getName() + "\t" + rspt);
                 System.out.println("Query " + q.getName() + "\t" + rspt + " ms"); //progress trace message
             }
@@ -127,7 +127,7 @@ public class AsterixDBClient {
             }
             String qLang = (String) config.getParamValue(Constants.QUERY_LANG);
             if (config.isParamSet(Constants.PARTITIONS)) {
-                partitions = (String) config.getParamValue(Constants.PARTITIONS);
+                partitions = (String) String.valueOf(config.getParamValue(Constants.PARTITIONS));
             }
             if (config.isParamSet(Constants.LABEL)) {
                 label = (String) config.getParamValue(Constants.LABEL);
