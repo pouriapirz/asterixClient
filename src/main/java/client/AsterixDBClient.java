@@ -66,8 +66,8 @@ public class AsterixDBClient {
             for (String nextQ : qSeq) {
                 Query q = idToQuery.get(nextQ);
                 long rspt = executeQuery(q);
-                pw.print(test + "\t" + currentDate + "\t" + label + "\t" + partitions + "\t" );
-                pw.println(i + "\t" + q.getName() + "\t" + rspt);
+                pw.println(test + "\t" + currentDate + "\t" + label + "\t" + String.valueOf(partitions)
+                    + "\t" + i + "\t" + q.getName() + "\t" + rspt);
                 System.out.println("Query " + q.getName() + "\t" + rspt + " ms"); //progress trace message
             }
             pw.flush();
