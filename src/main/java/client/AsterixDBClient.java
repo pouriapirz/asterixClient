@@ -60,15 +60,19 @@ public class AsterixDBClient {
     }
 
     public void execute() {
+        DateFormat df = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss");
         initialize();
         for (int i = 0; i < iterations; i++) {
-            System.out.println("\niteration " + i); //progress trace message
+            //progress trace message
+            String currentTime = df.format(new Date());
+            System.out.println("\niteration " + i + " started at " + currentTime);
             for (String nextQ : qSeq) {
                 Query q = idToQuery.get(nextQ);
                 long rspt = executeQuery(q);
                 pw.println(test + "\t" + currentDate + "\t" + label + "\t" + partitions
                     + "\t" + i + "\t" + q.getName() + "\t" + rspt);
-                System.out.println("Query " + q.getName() + "\t" + rspt + " ms"); //progress trace message
+                //progress trace message
+                System.out.println("Query " + q.getName() + "\t" + rspt + " ms");
             }
             pw.flush();
         }
@@ -98,7 +102,7 @@ public class AsterixDBClient {
             if (handle != null) {
                 resultBuilder.setParameter("handle", handle);
                 uri = resultBuilder.build();
-                System.err.println(uri);
+                //System.err.println(uri);
                 httpGet.setURI(uri);
                 response = httpclient.execute(httpGet);
                 entity = response.getEntity();
